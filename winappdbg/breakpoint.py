@@ -549,7 +549,7 @@ class CodeBreakpoint (Breakpoint):
     typeName = 'code breakpoint'
 
     if win32.arch in (win32.ARCH_I386, win32.ARCH_AMD64):
-        bpInstruction = '\xCC'      # int 3
+        bpInstruction = b'\xcc'      # int 3
 
     def __init__(self, address, condition = True, action = None):
         """
@@ -1045,7 +1045,8 @@ class Hook (object):
         if arch is None:
             arch = win32.arch
         if arch == win32.ARCH_I386:
-            return _Hook_i386(*argv, **argd)
+            h = _Hook_i386()
+            return _Hook_i386.__init__(h, *argv, **argd)
         if arch == win32.ARCH_AMD64:
             return _Hook_amd64(*argv, **argd)
         return object.__new__(cls, *argv, **argd)

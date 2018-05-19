@@ -2419,13 +2419,20 @@ class Process (_ThreadContainer, _ModuleContainer):
 ##                szString = u''.join(szString)
 
             # Truncate the string when the first null char is found.
-            szString = szString[ : szString.find(u'\0') ]
+            pos = szString.find(b'\x00\x00')
+            while (pos % 2 != 0) and pos != -1:
+                pos = szString.find(b'\x00\x00', pos+1)
+            szString = szString[ : pos ]
+            szString = szString.decode(encoding='utf-16')
+            
 
         # If the string is ANSI...
         else:
-
+            
             # Truncate the string when the first null char is found.
-            szString = szString[ : szString.find('\0') ]
+            szString = szString[ : szString.find(0) ]
+            szString = szString.decode(encoding='ascii')
+
 
         # Return the decoded string.
         return szString

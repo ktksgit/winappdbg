@@ -39,7 +39,7 @@ def memory_search( pid, bytes ):
     for address in process.search_bytes( bytes ):
 
         # Print the memory address where it was found.
-        print HexDump.address( address )
+        print (HexDump.address( address ))
 
     # You could also use process.search_regexp to use regular expressions,
     # or process.search_text for Unicode strings,
@@ -51,5 +51,5 @@ def memory_search( pid, bytes ):
 if __name__ == "__main__":
     import sys
     pid   = int( sys.argv[1] )
-    bytes = sys.argv[2]
-    memory_search( pid, bytes )
+    _bytes = sys.argv[2]
+    memory_search( pid, _bytes )

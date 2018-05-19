@@ -282,10 +282,10 @@ class Main (object):
 
     def build_searchers_list(self, cls):
         searchers = getattr(self.options, cls.name)
-        for index in xrange(len(searchers)):
+        for index in range(len(searchers)):
             try:
                 searchers[index] = cls( searchers[index], index )
-            except Exception, e:
+            except Exception as e:
                 msg = cls.init_error_msg(index, searchers[index], e)
                 self.parser.error(msg)
 

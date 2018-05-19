@@ -206,21 +206,21 @@ def main(argv):
                         srvlist.extend( [''] * (len(caplist) - len(srvlist)) )
                     if len(caplist):
                         table.addRow(' %d' % pid, fileName, caplist[0], srvlist[0])
-                        for i in xrange(1, len(caplist)):
+                        for i in range(1, len(caplist)):
                             table.addRow('', '', caplist[i], srvlist[i])
                     else:
                         table.addRow(' %d' % pid, fileName, '', '')
                 elif options.windows:
                     if len(caplist):
                         table.addRow(' %d' % pid, fileName, caplist[0])
-                        for i in xrange(1, len(caplist)):
+                        for i in range(1, len(caplist)):
                             table.addRow('', '', caplist[i])
                     else:
                         table.addRow(' %d' % pid, fileName, '')
                 elif options.services:
                     if len(srvlist):
                         table.addRow(' %d' % pid, fileName, srvlist[0])
-                        for i in xrange(1, len(srvlist)):
+                        for i in range(1, len(srvlist)):
                             table.addRow('', '', srvlist[i])
                     else:
                         table.addRow(' %d' % pid, fileName, '')

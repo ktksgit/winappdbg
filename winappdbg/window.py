@@ -37,7 +37,7 @@ Window instrumentation.
 
 __all__ = ['Window']
 
-import win32
+import winappdbg.win32 as win32
 
 # Cygwin compatibility.
 try:

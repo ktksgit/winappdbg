@@ -229,24 +229,24 @@ __all__ =   [
             ]
 
 # Import all public symbols
-from breakpoint import *
-from crash import *
-from debug import *
-from disasm import *
-from event import *
-from interactive import *
-from module import *
-from process import *
-from registry import *
-from system import *
-from search import *
-from textio import *
-from thread import *
-from util import *
-from window import *
+from .breakpoint import *
+from .crash import *
+from .debug import *
+from .disasm import *
+from .event import *
+from .interactive import *
+from .module import *
+from .process import *
+from .registry import *
+from .system import *
+from .search import *
+from .textio import *
+from .tthread import *
+from .util import *
+from .window import *
 
-import win32
-from win32 import Handle, ProcessHandle, ThreadHandle, FileHandle
+import winappdbg.win32
+from .win32 import Handle, ProcessHandle, ThreadHandle, FileHandle
 
 try:
     # We need to ignore all warnings from this module because SQLAlchemy

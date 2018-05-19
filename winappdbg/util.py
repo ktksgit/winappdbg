@@ -75,7 +75,7 @@ __all__ = [
 import os
 import optparse
 
-import win32
+import winappdbg.win32 as win32
 
 # Cygwin compatibility.
 try:
@@ -294,6 +294,9 @@ class PathOperations (StaticClass):
         # XXX TODO
         # There are probably some native paths that
         # won't be converted by this naive approach.
+        if type(name) == bytes:
+            name = name.decode('ascii')
+        
         if name.startswith("\\"):
             if name.startswith("\\??\\"):
                 name = name[4:]
@@ -303,11 +306,11 @@ class PathOperations (StaticClass):
                     system_root_path = system_root_path[:-1]
                 name = system_root_path + name[11:]
             else:
-                for drive_number in xrange(ord('A'), ord('Z') + 1):
+                for drive_number in range(ord('A'), ord('Z') + 1):
                     drive_letter = '%c:' % drive_number
                     try:
                         device_native_path = win32.QueryDosDevice(drive_letter)
-                    except WindowsError, e:
+                    except WindowsError as e:
                         if e.winerror in (win32.ERROR_FILE_NOT_FOUND, \
                                                  win32.ERROR_PATH_NOT_FOUND):
                             continue
@@ -603,6 +606,9 @@ def ExecutableAndWriteableAddressIterator(memory_map):
 
 #==============================================================================
 
+def _test(registerMask, enableMask):
+    return (registerMask ^ x for x in enableMask)
+
 class DebugRegister (StaticClass):
     """
     Class to manipulate debug registers.
@@ -765,8 +771,12 @@ class DebugRegister (StaticClass):
     )
 
     # Dr7 &= disableMask[register]
-    disableMask = tuple( [registerMask ^ x for x in enableMask] )
-    del x
+
+    
+    #_test(len(self.dataDict), lengths)
+    
+    disableMask = tuple( _test(registerMask, enableMask))
+    #del x
 
     # orMask, andMask = triggerMask[register][trigger]
     # Dr7 = (Dr7 & andMask) | orMask    # to set

@@ -39,12 +39,12 @@ from __future__ import with_statement
 
 __all__ = ['System']
 
-import win32
-import win32.version
-from registry import Registry
-from util import MemoryAddresses, DebugRegister, classproperty
-from process import _ProcessContainer
-from window import Window
+import winappdbg.win32 as win32
+import winappdbg.win32.version
+from .registry import Registry
+from .util import MemoryAddresses, DebugRegister, classproperty
+from .process import _ProcessContainer
+from .window import Window
 
 import os
 import sys
@@ -246,7 +246,7 @@ class System (_ProcessContainer):
         try:
             cls.request_privileges(win32.SE_DEBUG_NAME)
             return True
-        except Exception, e:
+        except Exception as e:
             if not bIgnoreExceptions:
                 raise
         return False
@@ -272,7 +272,7 @@ class System (_ProcessContainer):
         try:
             cls.drop_privileges(win32.SE_DEBUG_NAME)
             return True
-        except Exception, e:
+        except Exception as e:
             if not bIgnoreExceptions:
                 raise
         return False
@@ -749,7 +749,7 @@ class System (_ProcessContainer):
             if not previous or force:
                 os.environ["_NT_SYMBOL_PATH"] = symbol_store_path
             return previous
-        except Exception, e:
+        except Exception as e:
             warnings.warn("Cannot fix symbol path, reason: %s" % str(e),
                           RuntimeWarning)
 

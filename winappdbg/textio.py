@@ -53,8 +53,8 @@ __all__ =   [
                 'Logger',
             ]
 
-import win32
-from util import StaticClass
+import winappdbg.win32 as win32
+from .util import StaticClass
 
 import re
 import time
@@ -128,7 +128,7 @@ class HexInput (StaticClass):
         if len(token) % 2 != 0:
             raise ValueError("Missing characters in hex data")
         data = ''
-        for i in xrange(0, len(token), 2):
+        for i in range(0, len(token), 2):
             x = token[i:i+2]
             d = int(x, 16)
             s = struct.pack('<B', d)
@@ -158,17 +158,17 @@ class HexInput (StaticClass):
         if len(token) % 2 != 0:
             raise ValueError("Missing characters in hex data")
         regexp = ''
-        for i in xrange(0, len(token), 2):
+        for i in range(0, len(token), 2):
             x = token[i:i+2]
             if x == '??':
                 regexp += '.'
             elif x[0] == '?':
                 f = '\\x%%.1x%s' % x[1]
-                x = ''.join([ f % c for c in xrange(0, 0x10) ])
+                x = ''.join([ f % c for c in range(0, 0x10) ])
                 regexp = '%s[%s]' % (regexp, x)
             elif x[1] == '?':
                 f = '\\x%s%%.1x' % x[0]
-                x = ''.join([ f % c for c in xrange(0, 0x10) ])
+                x = ''.join([ f % c for c in range(0, 0x10) ])
                 regexp = '%s[%s]' % (regexp, x)
             else:
                 regexp = '%s\\x%s' % (regexp, x)
@@ -222,7 +222,7 @@ class HexInput (StaticClass):
             if line:
                 try:
                     value = cls.integer(line)
-                except ValueError, e:
+                except ValueError as e:
                     msg = "Error in line %d of %s: %s"
                     msg = msg % (count, filename, str(e))
                     raise ValueError(msg)
@@ -293,7 +293,7 @@ class HexInput (StaticClass):
             if line:
                 try:
                     value = cls.integer(line)
-                except ValueError, e:
+                except ValueError as e:
                     value = line
                 result.append(value)
         return result
@@ -561,7 +561,7 @@ class HexDump (StaticClass):
         if len(data) & 1 != 0:
             data += '\0'
         return separator.join( [ '%.4x' % struct.unpack('<H', data[i:i+2])[0] \
-                                           for i in xrange(0, len(data), 2) ] )
+                                           for i in range(0, len(data), 2) ] )
 
     @staticmethod
     def hexa_dword(data, separator = ' '):
@@ -581,7 +581,7 @@ class HexDump (StaticClass):
         if len(data) & 3 != 0:
             data += '\0' * (4 - (len(data) & 3))
         return separator.join( [ '%.8x' % struct.unpack('<L', data[i:i+4])[0] \
-                                           for i in xrange(0, len(data), 4) ] )
+                                           for i in range(0, len(data), 4) ] )
 
     @staticmethod
     def hexa_qword(data, separator = ' '):
@@ -601,7 +601,7 @@ class HexDump (StaticClass):
         if len(data) & 7 != 0:
             data += '\0' * (8 - (len(data) & 7))
         return separator.join( [ '%.16x' % struct.unpack('<Q', data[i:i+8])[0]\
-                                           for i in xrange(0, len(data), 8) ] )
+                                           for i in range(0, len(data), 8) ] )
 
     @classmethod
     def hexline(cls, data, separator = ' ', width = None):
@@ -705,11 +705,11 @@ class HexDump (StaticClass):
         """
         result = ''
         if address is None:
-            for i in xrange(0, len(data), width):
+            for i in range(0, len(data), width):
                 result = '%s%s\n' % ( result, \
                              callback(data[i:i+width], *cb_args, **cb_kwargs) )
         else:
-            for i in xrange(0, len(data), width):
+            for i in range(0, len(data), width):
                 result = '%s%s: %s\n' % (
                              result,
                              cls.address(address, bits),
@@ -1124,7 +1124,7 @@ class Table (object):
             width.extend( len_row[ -missing : ] )
         elif missing < 0:
             len_row.extend( [0] * (-missing) )
-        self.__width = [ max( width[i], len_row[i] ) for i in xrange(len(len_row)) ]
+        self.__width = [ max( width[i], len_row[i] ) for i in range(len(len_row)) ]
         self.__cols.append(row)
 
     def justify(self, column, direction):
@@ -1194,7 +1194,7 @@ class Table (object):
         """
         Print the text output for the table.
         """
-        print self.getOutput()
+        print (self.getOutput())
 
 #------------------------------------------------------------------------------
 
@@ -1818,14 +1818,14 @@ class Logger(object):
         @type  text: str
         @param text: Text to print.
         """
-        if isinstance(text, unicode):
-            text = text.encode('cp1252')
+        #if isinstance(text, unicode):
+        #    text = text.encode('cp1252')
         if self.verbose:
-            print text
+            print (text)
         if self.logfile:
             try:
                 self.fd.writelines('%s\n' % text)
-            except IOError, e:
+            except IOError as e:
                 self.__logfile_error(e)
 
     def log_text(self, text):

@@ -32,8 +32,8 @@
 Wrapper for advapi32.dll in ctypes.
 """
 
-from defines import *
-from kernel32 import *
+from .defines import *
+from .kernel32 import *
 
 # XXX TODO
 # + add transacted registry operations
@@ -1925,7 +1925,7 @@ def GetThreadWaitChain(WctHandle, Context = None, Flags = WCTP_GETINFO_ALL_FLAGS
         NodeInfoArray = (WAITCHAIN_NODE_INFO * NodeCount)()
         _GetThreadWaitChain(WctHandle, Context, Flags, ThreadId, byref(dwNodeCount), ctypes.cast(ctypes.pointer(NodeInfoArray), PWAITCHAIN_NODE_INFO), byref(IsCycle))
     return (
-        [ WaitChainNodeInfo(NodeInfoArray[index]) for index in xrange(dwNodeCount.value) ],
+        [ WaitChainNodeInfo(NodeInfoArray[index]) for index in range(dwNodeCount.value) ],
         bool(IsCycle.value)
     )
 
@@ -2253,7 +2253,7 @@ def _internal_RegQueryValueEx(ansi, hKey, lpValueName = None, bGetData = True):
     if Type == REG_QWORD:   # REG_QWORD_LITTLE_ENDIAN
         if cbData.value != 8:
             raise ValueError("REG_QWORD value of size %d" % cbData.value)
-        qwData = QWORD(0L)
+        qwData = QWORD(0)
         _RegQueryValueEx(hKey, lpValueName, None, None, byref(qwData), byref(cbData))
         return qwData.value, Type
 
@@ -2348,7 +2348,7 @@ def RegSetValueEx(hKey, lpValueName = None, lpData = None, dwType = None):
             dwType = REG_SZ
         elif isinstance(lpData, int):
             dwType = REG_DWORD
-        elif isinstance(lpData, long):
+        elif isinstance(lpData, int):
             dwType = REG_QWORD
         else:
             dwType = REG_BINARY
@@ -2510,7 +2510,7 @@ def _internal_RegEnumValue(ansi, hKey, dwIndex, bGetData = True):
             elif Type == REG_QWORD:   # REG_QWORD_LITTLE_ENDIAN
                 if cbData.value != sizeof(QWORD):
                     raise ValueError("REG_QWORD value of size %d" % cbData.value)
-                Data = QWORD(0L)
+                Data = QWORD(0)
 
             elif Type in (REG_SZ, REG_EXPAND_SZ, REG_MULTI_SZ):
                 if ansi:
@@ -3109,7 +3109,7 @@ def EnumServicesStatusA(hSCManager, dwServiceType = SERVICE_DRIVER | SERVICE_WIN
         if sizeof(ServicesBuffer) < (sizeof(ENUM_SERVICE_STATUSA) * ServicesReturned.value):
             raise ctypes.WinError()
         lpServicesArray = ctypes.cast(ctypes.cast(ctypes.pointer(ServicesBuffer), ctypes.c_void_p), LPENUM_SERVICE_STATUSA)
-        for index in xrange(0, ServicesReturned.value):
+        for index in range(0, ServicesReturned.value):
             Services.append( ServiceStatusEntry(lpServicesArray[index]) )
         if success: break
     if not success:
@@ -3138,7 +3138,7 @@ def EnumServicesStatusW(hSCManager, dwServiceType = SERVICE_DRIVER | SERVICE_WIN
         if sizeof(ServicesBuffer) < (sizeof(ENUM_SERVICE_STATUSW) * ServicesReturned.value):
             raise ctypes.WinError()
         lpServicesArray = ctypes.cast(ctypes.cast(ctypes.pointer(ServicesBuffer), ctypes.c_void_p), LPENUM_SERVICE_STATUSW)
-        for index in xrange(0, ServicesReturned.value):
+        for index in range(0, ServicesReturned.value):
             Services.append( ServiceStatusEntry(lpServicesArray[index]) )
         if success: break
     if not success:
@@ -3185,7 +3185,7 @@ def EnumServicesStatusExA(hSCManager, InfoLevel = SC_ENUM_PROCESS_INFO, dwServic
         if sizeof(ServicesBuffer) < (sizeof(ENUM_SERVICE_STATUS_PROCESSA) * ServicesReturned.value):
             raise ctypes.WinError()
         lpServicesArray = ctypes.cast(ctypes.cast(ctypes.pointer(ServicesBuffer), ctypes.c_void_p), LPENUM_SERVICE_STATUS_PROCESSA)
-        for index in xrange(0, ServicesReturned.value):
+        for index in range(0, ServicesReturned.value):
             Services.append( ServiceStatusProcessEntry(lpServicesArray[index]) )
         if success: break
     if not success:
@@ -3217,7 +3217,7 @@ def EnumServicesStatusExW(hSCManager, InfoLevel = SC_ENUM_PROCESS_INFO, dwServic
         if sizeof(ServicesBuffer) < (sizeof(ENUM_SERVICE_STATUS_PROCESSW) * ServicesReturned.value):
             raise ctypes.WinError()
         lpServicesArray = ctypes.cast(ctypes.cast(ctypes.pointer(ServicesBuffer), ctypes.c_void_p), LPENUM_SERVICE_STATUS_PROCESSW)
-        for index in xrange(0, ServicesReturned.value):
+        for index in range(0, ServicesReturned.value):
             Services.append( ServiceStatusProcessEntry(lpServicesArray[index]) )
         if success: break
     if not success:

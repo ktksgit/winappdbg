@@ -50,9 +50,9 @@ __all__ =   [
                 'HexPattern',
             ]
 
-from textio import HexInput
-from util import StaticClass, MemoryAddresses
-import win32
+from .textio import HexInput
+from .util import StaticClass, MemoryAddresses
+import winappdbg.win32 as win32
 
 import warnings
 
@@ -267,7 +267,7 @@ class TextPattern (BytePattern):
         if self.isUnicode:
             try:
                 data = unicode(data, self.encoding)
-            except Exception, e:
+            except Exception as e:
 ##                traceback.print_exc(e)    # XXX DEBUG
                 return None
         return (address, size, data)

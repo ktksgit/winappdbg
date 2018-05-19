@@ -938,7 +938,7 @@ class CrashDAO (BaseDAO):
 
         # Filter all the fields in the crashes table that are present in the
         # CrashDTO object and not set to None, except for the row ID.
-        for name, column in CrashDTO.__dict__.iteritems():
+        for name, column in CrashDTO.__dict__.items():
             if not name.startswith('__') and name not in ('id',
                                                           'signature',
                                                           'data'):

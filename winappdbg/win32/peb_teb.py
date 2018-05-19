@@ -32,8 +32,8 @@
 PEB and TEB structures, constants and data types.
 """
 
-from defines import *
-from version import os
+from .defines import *
+from .version import os
 
 #==============================================================================
 # This is used later on to calculate the list of exported symbols.

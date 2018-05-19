@@ -40,7 +40,7 @@ debug = Debug( bKillOnExit = True )
 
 # The user can stop debugging with Control-C.
 try:
-    print "Hit Control-C to stop debugging..."
+    print ("Hit Control-C to stop debugging...")
 
     # Start a new process for debugging.
     debug.execv( sys.argv[ 1 : ] )
@@ -50,7 +50,7 @@ try:
 
 # If the user presses Control-C...
 except KeyboardInterrupt:
-    print "Interrupted by user."
+    print ("Interrupted by user.")
 
     # Stop debugging. This kills all debugged processes.
     debug.stop()

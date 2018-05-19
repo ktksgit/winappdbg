@@ -36,7 +36,7 @@ def show_command_line( pid ):
     process = Process( pid )
 
     # Print the process command line.
-    print process.get_command_line()
+    print (process.get_command_line())
 
     # The same thing could be done with the environment variables.
     #import pprint

@@ -42,9 +42,9 @@ from __future__ import with_statement
 
 __all__ = ['Module', 'DebugSymbolsWarning']
 
-import win32
-from textio import HexInput, HexDump
-from util import PathOperations
+import winappdbg.win32 as win32
+from .textio import HexInput, HexDump
+from .util import PathOperations
 
 # delayed imports
 Process = None
@@ -134,7 +134,7 @@ class Module (object):
             if self.undecorate:
                 try:
                     SymbolName = win32.UnDecorateSymbolName(SymbolName)
-                except Exception, e:
+                except Exception as e:
                     pass # not all symbols are decorated!
             self.symbols.append( (SymbolName, SymbolAddress, SymbolSize) )
             return win32.TRUE
@@ -230,7 +230,7 @@ class Module (object):
         else:
             global Process      # delayed import
             if Process is None:
-                from process import Process
+                from .process import Process
             if not isinstance(process, Process):
                 msg  = "Parent process must be a Process instance, "
                 msg += "got %s instead" % type(process)
@@ -288,7 +288,7 @@ class Module (object):
                 mi     = win32.GetModuleInformation(handle, base)
                 self.SizeOfImage = mi.SizeOfImage
                 self.EntryPoint  = mi.EntryPoint
-            except WindowsError, e:
+            except WindowsError as e:
                 warnings.warn(
                     "Cannot get size and entry point of module %s, reason: %s"\
                     % (self.get_name(), e.strerror), RuntimeWarning)
@@ -342,10 +342,10 @@ class Module (object):
         pathname = self.get_filename()
         if pathname:
             modName = self.__filename_to_modname(pathname)
-            if isinstance(modName, unicode):
+            if isinstance(modName, str):
                 try:
                     modName = modName.encode('cp1252')
-                except UnicodeEncodeError, e:
+                except UnicodeEncodeError as e:
                     warnings.warn(str(e))
         else:
             modName = "0x%x" % self.get_base()
@@ -502,7 +502,7 @@ class Module (object):
                         win32.SymUnloadModule64(hProcess, BaseOfDll)
             finally:
                 win32.SymCleanup(hProcess)
-        except WindowsError, e:
+        except WindowsError as e:
             msg = "Cannot load debug symbols for process ID %d, reason:\n%s"
             msg = msg % (self.get_pid(), traceback.format_exc(e))
             warnings.warn(msg, DebugSymbolsWarning)
@@ -568,7 +568,7 @@ class Module (object):
             for (SymbolName, SymbolAddress, SymbolSize) in self.iter_symbols():
                 try:
                     SymbolName = win32.UnDecorateSymbolName(SymbolName)
-                except Exception, e:
+                except Exception as e:
                     continue
                 if symbol == SymbolName:
                     return SymbolAddress
@@ -580,7 +580,7 @@ class Module (object):
             for (SymbolName, SymbolAddress, SymbolSize) in self.iter_symbols():
                 try:
                     SymbolName = win32.UnDecorateSymbolName(SymbolName)
-                except Exception, e:
+                except Exception as e:
                     continue
                 if symbol == SymbolName.lower():
                     return SymbolAddress
@@ -669,7 +669,7 @@ class Module (object):
                 if new_offset <= offset:
                     function    = SymbolName
                     offset      = new_offset
-        except WindowsError, e:
+        except WindowsError as e:
             pass
 
         # Parse the label and return it.
@@ -716,7 +716,7 @@ class Module (object):
         try:
             hlib    = win32.GetModuleHandle(filename)
             address = win32.GetProcAddress(hlib, function)
-        except WindowsError, e:
+        except WindowsError as e:
 
             # Load the DLL locally, resolve the function and unload it.
             try:
@@ -726,7 +726,7 @@ class Module (object):
                     address = win32.GetProcAddress(hlib, function)
                 finally:
                     win32.FreeLibrary(hlib)
-            except WindowsError, e:
+            except WindowsError as e:
                 return None
 
         # A NULL pointer means the function was not found.
@@ -917,7 +917,7 @@ class _ModuleContainer (object):
         @return: Iterator of DLL base addresses in this snapshot.
         """
         self.__initialize_snapshot()
-        return self.__moduleDict.iterkeys()
+        return self.__moduleDict
 
     def iter_modules(self):
         """
@@ -926,7 +926,7 @@ class _ModuleContainer (object):
         @return: Iterator of L{Module} objects in this snapshot.
         """
         self.__initialize_snapshot()
-        return self.__moduleDict.itervalues()
+        return self.__moduleDict.values()
 
     def get_module_bases(self):
         """
@@ -935,7 +935,7 @@ class _ModuleContainer (object):
         @return: List of DLL base addresses in this snapshot.
         """
         self.__initialize_snapshot()
-        return self.__moduleDict.keys()
+        return list(self.__moduleDict.keys())
 
     def get_module_count(self):
         """
@@ -1013,7 +1013,7 @@ class _ModuleContainer (object):
         """
         bases = self.get_module_bases()
         bases.sort()
-        bases.append(0x10000000000000000L)  # max. 64 bit address + 1
+        bases.append(0x10000000000000000)  # max. 64 bit address + 1
         if address >= bases[0]:
             i = 0
             max_i = len(bases) - 1
@@ -1092,7 +1092,7 @@ class _ModuleContainer (object):
         """
         Clears the modules snapshot.
         """
-        for aModule in self.__moduleDict.itervalues():
+        for aModule in self.__moduleDict.values():
             aModule.clear()
         self.__moduleDict = dict()
 

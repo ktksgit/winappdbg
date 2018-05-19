@@ -1828,7 +1828,7 @@ class _ThreadContainer (object):
         @return: List of global thread IDs in this snapshot.
         """
         self.__initialize_snapshot()
-        return self.__threadDict.keys()
+        return list(self.__threadDict.keys())
 
     def get_thread_count(self):
         """

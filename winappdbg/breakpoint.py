@@ -2143,14 +2143,14 @@ class _BreakpointContainer (object):
         process = event.get_process()
 
         # Cleanup code breakpoints
-        for (bp_pid, bp_address) in self.__codeBP.keys():
+        for (bp_pid, bp_address) in list(self.__codeBP.keys()):
             if bp_pid == pid:
                 bp = self.__codeBP[ (bp_pid, bp_address) ]
                 self.__cleanup_breakpoint(event, bp)
                 del self.__codeBP[ (bp_pid, bp_address) ]
 
         # Cleanup page breakpoints
-        for (bp_pid, bp_address) in self.__pageBP.keys():
+        for (bp_pid, bp_address) in list(self.__pageBP.keys()):
             if bp_pid == pid:
                 bp = self.__pageBP[ (bp_pid, bp_address) ]
                 self.__cleanup_breakpoint(event, bp)

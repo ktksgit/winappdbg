@@ -403,7 +403,8 @@ class Breakpoint (object):
             except Exception as e:
                 msg = ("Breakpoint action callback %r"
                        " raised an exception: %s")
-                msg = msg % (action, traceback.format_exc(e))
+                #msg = msg % (action, traceback.format_exc(e))
+                msg = msg % (action, e)
                 warnings.warn(msg, BreakpointCallbackWarning)
                 return False
         return True
@@ -1046,7 +1047,8 @@ class Hook (object):
             arch = win32.arch
         if arch == win32.ARCH_I386:
             h = _Hook_i386()
-            return _Hook_i386.__init__(h, *argv, **argd)
+            _Hook_i386.__init__(h, *argv, **argd)
+            return h
         if arch == win32.ARCH_AMD64:
             return _Hook_amd64(*argv, **argd)
         return object.__new__(cls, *argv, **argd)

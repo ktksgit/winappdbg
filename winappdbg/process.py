@@ -1979,7 +1979,9 @@ class Process (_ThreadContainer, _ModuleContainer):
             nChars = nChars * 2
         szString = self.read(lpBaseAddress, nChars)
         if fUnicode:
-            szString = text(szString, 'U16', 'ignore')
+            szString = szString.decode(encoding='utf-16')
+        else:
+            szString = szString.decode(encoding='latin-1')
         return szString
 
 #------------------------------------------------------------------------------

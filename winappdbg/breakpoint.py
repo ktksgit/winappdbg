@@ -2995,7 +2995,7 @@ class _BreakpointContainer (object):
         @rtype:  list of tuple( int, L{CodeBreakpoint} )
         @return: All code breakpoints as a list of tuples (pid, bp).
         """
-        return [ (pid, bp) for ((pid, address), bp) in self.__codeBP.iteritems() ]
+        return [ (pid, bp) for ((pid, address), bp) in self.__codeBP.items() ]
 
     def get_all_page_breakpoints(self):
         """

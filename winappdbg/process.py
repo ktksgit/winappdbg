@@ -2433,7 +2433,7 @@ class Process (_ThreadContainer, _ModuleContainer):
             
             # Truncate the string when the first null char is found.
             szString = szString[ : szString.find(0) ]
-            szString = szString.decode(encoding='ascii')
+            szString = szString.decode(encoding='latin-1')
 
 
         # Return the decoded string.

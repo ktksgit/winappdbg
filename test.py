@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,11 @@ def test_sqlalchemy_load():
 
 def test_windbg_version():
     from winappdbg import System, win32
-    dbghelp = System.load_dbghelp()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        dbghelp = System.load_dbghelp()
+    if dbghelp is None:
+        raise RuntimeError("WinDbg not found")
     pathname = win32.GetModuleFileNameEx(-1, dbghelp._handle)
     sysroot = os.getenv("SystemRoot")
     if not sysroot:
@@ -70,7 +74,7 @@ def test_windbg_version():
     if (pathname.lower().startswith(system.lower()) or
         pathname.lower().startswith(syswow.lower())
     ):
-        raise RuntimeError("WinDbg not found")
+        raise RuntimeError("Microsoft SDK not found")
 
 if __name__ == '__main__':
     if test("module load", test_module_load):

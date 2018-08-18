@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -400,6 +400,9 @@ class PyDasmEngine (Engine):
 class LibdisassembleEngine (Engine):
     """
     Integration with Immunity libdisassemble.
+
+    @warn: The libdisassemble project appears to be abandoned.
+        We recommend switching to another disassembly engine.
     """
 
     name = "Libdisassemble"
@@ -525,7 +528,8 @@ class CapstoneEngine (Engine):
         arch, mode = self.__constants[self.arch]
 
         # Get the decoder function outside the loop.
-        decoder = capstone.cs_disasm_quick
+        md = capstone.Cs(arch, mode)
+        decoder = md.disasm_lite
 
         # If the buggy version of the bindings are being used, we need to catch
         # all exceptions broadly. If not, we only need to catch CsError.
@@ -552,7 +556,7 @@ class CapstoneEngine (Engine):
             instr = None
             try:
                 instr = list(decoder(
-                    arch, mode, code[offset:offset+16], address+offset, 1
+                    code[offset:offset+16], address+offset, 1
                 ))[0]
             except IndexError:
                 pass   # No instructions decoded.
@@ -566,9 +570,9 @@ class CapstoneEngine (Engine):
                 # Copy the values quickly before someone overwrites them,
                 # if using the buggy version of the bindings (otherwise it's
                 # irrelevant in which order we access the properties).
-                length   = instr.size
-                mnemonic = instr.mnemonic
-                op_str   = instr.op_str
+                length   = instr[1]
+                mnemonic = instr[2]
+                op_str   = instr[3]
 
                 # Concatenate the mnemonic and the operands.
                 if op_str:
@@ -643,11 +647,15 @@ class Disassembler (object):
     """
 
     engines = (
+
+        # These are the recommended disassembly engines.
         DistormEngine,  # diStorm engine goes first for backwards compatibility
-        BeaEngine,
-        CapstoneEngine,
-        LibdisassembleEngine,
-        PyDasmEngine,
+        CapstoneEngine, # most likely to be up to date along with diStorm
+
+        # These are kept for backwards compatibility only.
+        BeaEngine,      # unmaintained in a long time
+        PyDasmEngine,   # same
+        LibdisassembleEngine,   # entirely abandoned by Immunity
     )
 
     # Add the list of implemented disassembler adaptors to the docstring.

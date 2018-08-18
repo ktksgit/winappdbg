@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -55,9 +55,8 @@ Blog:    U{http://breakingcode.wordpress.com}
 @group Memory search:
     Search,
     Pattern,
-    BytePattern,
-    TextPattern,
-    RegExpPattern,
+    StringPattern,
+    IStringPattern,
     HexPattern
 
 @group Debug events:
@@ -181,9 +180,8 @@ __all__ =   [
                 # from search import *
                 'Search',
                 'Pattern',
-                'BytePattern',
-                'TextPattern',
-                'RegExpPattern',
+                'StringPattern',
+                'IStringPattern',
                 'HexPattern',
 
                 # from registry import *

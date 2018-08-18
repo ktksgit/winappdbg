@@ -1,12 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Acknowledgements:
-#  Nicolas Economou, for his ptool suite on which this tool is inspired.
-#  http://tinyurl.com/nicolaseconomou
-
-# Process memory reader
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,51 +28,42 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import os
-import sys
+# The WinAppDbg search engine will issue a warning if there is some part of
+# the process memory that cannot be read. We will ignore them for now.
+import warnings
+warnings.simplefilter("ignore")
 
-from winappdbg import win32, Process, System, HexDump, HexInput
+from winappdbg import Process, HexDump
 
-def main():
-    print "Process string extractor"
-    print "by Mario Vilas (mvilas at gmail.com)"
-    print
+def wildcard_search( pid, pattern ):
 
-    if len(sys.argv) != 2:
-        script = os.path.basename(sys.argv[0])
-        print "  %s <pid>" % script
-        print "  %s <process.exe>" % script
-        return
+    #
+    # Hex patterns must be in this form:
+    #     "68 65 6c 6c 6f 20 77 6f 72 6c 64"  # "hello world"
+    #
+    # Spaces are optional. Capitalization of hex digits doesn't matter.
+    # This is exactly equivalent to the previous example:
+    #     "68656C6C6F20776F726C64"            # "hello world"
+    #
+    # Wildcards are allowed, in the form of a "?" sign in any hex digit:
+    #     "5? 5? c3"          # pop register / pop register / ret
+    #     "b8 ?? ?? ?? ??"    # mov eax, immediate value
+    #
 
-    System.request_debug_privileges()
+    # Instance a Process object.
+    process = Process( pid )
 
-    try:
-        pid = HexInput.integer(sys.argv[1])
-    except Exception, e:
-        s = System()
-        s.scan_processes()
-        pl = s.find_processes_by_filename(sys.argv[1])
-        if not pl:
-            print "Process not found: %s" % sys.argv[1]
-            return
-        if len(pl) > 1:
-            print "Multiple processes found for %s" % sys.argv[1]
-            for p,n in pl:
-                print "\t%s: %s" % (p.get_pid(),n)
-            return
-        pid = pl[0][0].get_pid()
-        s.clear()
-        del s
+    # Search for the hexadecimal pattern in the process memory.
+    for address, data in process.search_hexa( pattern ):
 
-    p = Process(pid)
-    for address, size, data in p.strings():
-        if data.endswith('\0'): data = data[:-1]
-        print "%s: %r" % (HexDump.address(address), data)
+        # Print a hex dump for each memory location found.
+        print HexDump.hexblock(data, address = address)
 
-if __name__ == '__main__':
-    try:
-        import psyco
-        psyco.bind(main)
-    except ImportError:
-        pass
-    main()
+# When invoked from the command line,
+# the first argument is a process ID,
+# the second argument is a DLL filename.
+if __name__ == "__main__":
+    import sys
+    pid   = int( sys.argv[1] )
+    pattern = sys.argv[2]
+    wildcard_search( pid, pattern )

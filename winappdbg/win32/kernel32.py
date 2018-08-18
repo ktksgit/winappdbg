@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1140,7 +1140,7 @@ class MemoryBasicInformation (object):
             copy-on-write. This means the pages are writeable, but changes
             are not propagated to disk.
         @note:
-            Tipically data sections in executable images are marked like this.
+            Typically data sections in executable images are marked like this.
         """
         return self.has_content() and bool(self.Protect & self.COPY_ON_WRITE)
 
@@ -3094,44 +3094,6 @@ def GetFinalPathNameByHandleW(hFile, dwFlags = FILE_NAME_NORMALIZED | VOLUME_NAM
     return lpszFilePath.value
 
 GetFinalPathNameByHandle = GuessStringType(GetFinalPathNameByHandleA, GetFinalPathNameByHandleW)
-
-# DWORD GetFullPathName(
-#   LPCTSTR lpFileName,
-#   DWORD nBufferLength,
-#   LPTSTR lpBuffer,
-#   LPTSTR* lpFilePart
-# );
-def GetFullPathNameA(lpFileName):
-    _GetFullPathNameA = windll.kernel32.GetFullPathNameA
-    _GetFullPathNameA.argtypes = [LPSTR, DWORD, LPSTR, POINTER(LPSTR)]
-    _GetFullPathNameA.restype  = DWORD
-
-    nBufferLength = _GetFullPathNameA(lpFileName, 0, None, None)
-    if nBufferLength <= 0:
-        raise ctypes.WinError()
-    lpBuffer   = ctypes.create_string_buffer('', nBufferLength + 1)
-    lpFilePart = LPSTR()
-    nCopied = _GetFullPathNameA(lpFileName, nBufferLength, lpBuffer, byref(lpFilePart))
-    if nCopied > nBufferLength or nCopied == 0:
-        raise ctypes.WinError()
-    return lpBuffer.value, lpFilePart.value
-
-def GetFullPathNameW(lpFileName):
-    _GetFullPathNameW = windll.kernel32.GetFullPathNameW
-    _GetFullPathNameW.argtypes = [LPWSTR, DWORD, LPWSTR, POINTER(LPWSTR)]
-    _GetFullPathNameW.restype  = DWORD
-
-    nBufferLength = _GetFullPathNameW(lpFileName, 0, None, None)
-    if nBufferLength <= 0:
-        raise ctypes.WinError()
-    lpBuffer   = ctypes.create_unicode_buffer(u'', nBufferLength + 1)
-    lpFilePart = LPWSTR()
-    nCopied = _GetFullPathNameW(lpFileName, nBufferLength, lpBuffer, byref(lpFilePart))
-    if nCopied > nBufferLength or nCopied == 0:
-        raise ctypes.WinError()
-    return lpBuffer.value, lpFilePart.value
-
-GetFullPathName = GuessStringType(GetFullPathNameA, GetFullPathNameW)
 
 # DWORD WINAPI GetTempPath(
 #   __in   DWORD nBufferLength,

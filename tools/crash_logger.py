@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Crash logger
-# Copyright (c) 2009-2016, Mario Vilas
+# Copyright (c) 2009-2018, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ class LoggingEventHandler(EventHandler):
 
     @type crashCollector: class
     @cvar crashCollector:
-        Crash collector class. Tipically L{Crash} or a custom subclass of it.
+        Crash collector class. Typically L{Crash} or a custom subclass of it.
 
         Most users don't ever need to change this.
         See: U{http://winappdbg.readthedocs.io/en/latest/Signature.html}

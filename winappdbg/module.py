@@ -926,7 +926,9 @@ class _ModuleContainer (object):
         @return: Iterator of L{Module} objects in this snapshot.
         """
         self.__initialize_snapshot()
-        return self.__moduleDict.values()
+
+        for modu in self.__moduleDict.values():
+            yield modu
 
     def get_module_bases(self):
         """

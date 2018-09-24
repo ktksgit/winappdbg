@@ -6,3 +6,6 @@ dist
 html
 pdf
 MANIFEST
+
+# Godot Engine
+*.png.import

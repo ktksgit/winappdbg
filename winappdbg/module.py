@@ -342,11 +342,6 @@ class Module (object):
         pathname = self.get_filename()
         if pathname:
             modName = self.__filename_to_modname(pathname)
-            if isinstance(modName, str):
-                try:
-                    modName = modName.encode('cp1252')
-                except UnicodeEncodeError as e:
-                    warnings.warn(str(e))
         else:
             modName = "0x%x" % self.get_base()
         return modName
@@ -711,6 +706,9 @@ class Module (object):
         filename = self.get_filename()
         if not filename:
             return None
+
+        if isinstance(function, str):
+            function = function.encode('cp1252') + b'\x00'
 
         # If the DLL is already mapped locally, resolve the function.
         try:

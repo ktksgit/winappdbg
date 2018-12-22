@@ -3684,13 +3684,13 @@ class Process (_ThreadContainer, _ModuleContainer):
         else:
 
             # Resolve kernel32.dll!LoadLibrary (A/W)
-            if type(dllname) == type(u''):
+            if False: # TODO: How to wide char variant?
                 pllibname = 'LoadLibraryW'
                 bufferlen = (len(dllname) + 1) * 2
                 dllname = win32.ctypes.create_unicode_buffer(dllname).raw[:bufferlen + 1]
             else:
                 pllibname = 'LoadLibraryA'
-                dllname   = str(dllname) + '\x00'
+                dllname   = dllname.encode('cp1252') + b'\x00'
                 bufferlen = len(dllname)
             pllib = aModule.resolve(pllibname)
             if not pllib:

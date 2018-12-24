@@ -47,7 +47,6 @@ from .process import _ProcessContainer
 from .window import Window
 
 import os
-import sys
 import glob
 import ctypes
 import ntpath
@@ -59,7 +58,7 @@ from os import getenv
 try:
     WindowsError
 except NameError:
-    from winappdbg.win32 import WindowsError, getenv
+    from winappdbg.win32 import WindowsError, getenv  # NOQA
 
 #==============================================================================
 
@@ -521,7 +520,7 @@ class System (_ProcessContainer):
                 try:
 
                     # Load a specific dbghelp.dll file
-                    debug.system.load_dbghelp("C:\Custom install path\dbghelp.dll")
+                    debug.system.load_dbghelp("C:\\Custom install path\\dbghelp.dll")
 
                     # Start a new process for debugging
                     debug.execv( argv )
@@ -658,7 +657,7 @@ class System (_ProcessContainer):
             # It's an outdated version generally, but still better than nothing.
             # Issue a warning to let the user know they should install the SDK.
             if dbghelp is None:
-                pathname = ntpath.join(getenv("WINDIR", "C:\WINDOWS"), "System32", "dbghelp.dll")
+                pathname = ntpath.join(getenv("WINDIR", "C:\\WINDOWS"), "System32", "dbghelp.dll")
                 try:
                     dbghelp = ctypes.windll.LoadLibrary(pathname)
                 except Exception:

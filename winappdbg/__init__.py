@@ -227,21 +227,21 @@ __all__ =   [
             ]
 
 # Import all public symbols
-from .breakpoint import *
-from .crash import *
-from .debug import *
-from .disasm import *
-from .event import *
-from .interactive import *
-from .module import *
-from .process import *
-from .registry import *
-from .system import *
-from .search import *
-from .textio import *
-from .tthread import *
-from .util import *
-from .window import *
+from .breakpoint import *  # NOQA
+from .crash import *  # NOQA
+from .debug import *  # NOQA
+from .disasm import *  # NOQA
+from .event import *  # NOQA
+from .interactive import *  # NOQA
+from .module import *  # NOQA
+from .process import *  # NOQA
+from .registry import *  # NOQA
+from .system import *  # NOQA
+from .search import *  # NOQA
+from .textio import *  # NOQA
+from .tthread import *  # NOQA
+from .util import *  # NOQA
+from .window import *  # NOQA
 
 import winappdbg.win32
 from .win32 import Handle, ProcessHandle, ThreadHandle, FileHandle

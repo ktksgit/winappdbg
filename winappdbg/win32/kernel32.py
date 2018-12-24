@@ -36,10 +36,10 @@ import warnings
 
 from builtins import str as text
 
-from .defines import *
+from .defines import *  # NOQA
 
-from . import context_i386
-from . import context_amd64
+from . import context_i386  # NOQA
+from . import context_amd64  # NOQA
 
 #==============================================================================
 # This is used later on to calculate the list of exported symbols.
@@ -933,8 +933,7 @@ class FileHandle (Handle):
                                         lpFileInformation, dwBufferSize)
         except AttributeError:
             from .ntdll import NtQueryInformationFile, \
-                              FileNameInformation, \
-                              FILE_NAME_INFORMATION
+                              FileNameInformation
             NtQueryInformationFile(self.value,
                                    FileNameInformation,
                                    lpFileInformation,
@@ -2025,6 +2024,35 @@ class PROCESSENTRY32(Structure):
         ('szExeFile',           TCHAR * 260),
     ]
 LPPROCESSENTRY32 = POINTER(PROCESSENTRY32)
+
+# typedef struct tagPROCESSENTRY32W {
+#    DWORD dwSize;
+#    DWORD cntUsage;
+#    DWORD th32ProcessID;
+#    ULONG_PTR th32DefaultHeapID;
+#    DWORD th32ModuleID;
+#    DWORD cntThreads;
+#    DWORD th32ParentProcessID;
+#    LONG pcPriClassBase;
+#    DWORD dwFlags;
+#    WCHAR szExeFile[MAX_PATH];
+# } PROCESSENTRY32W,  *PPROCESSENTRY32W;
+class PROCESSENTRY32W(Structure):
+    _fields_ = [
+        ('dwSize',              DWORD),
+        ('cntUsage',            DWORD),
+        ('th32ProcessID',       DWORD),
+        ('th32DefaultHeapID',   ULONG_PTR),
+        ('th32ModuleID',        DWORD),
+        ('cntThreads',          DWORD),
+        ('th32ParentProcessID', DWORD),
+        ('pcPriClassBase',      LONG),
+        ('dwFlags',             DWORD),
+        ('szExeFile',           WCHAR * 260),
+    ]
+LPPROCESSENTRY32W = POINTER(PROCESSENTRY32W)
+
+
 
 # typedef struct tagMODULEENTRY32 {
 #   DWORD dwSize;
@@ -4047,7 +4075,7 @@ def GetProcessId(hProcess):
 #   __in  HANDLE hThread
 # );
 def GetThreadId(hThread):
-    _GetThreadId = windll.kernel32._GetThreadId
+    _GetThreadId = windll.kernel32.GetThreadId
     _GetThreadId.argtypes = [HANDLE]
     _GetThreadId.restype  = DWORD
 

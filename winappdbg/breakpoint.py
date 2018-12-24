@@ -422,7 +422,6 @@ class Breakpoint (object):
 
         @raise Exception: Always.
         """
-        statemsg = ""
         oldState = self.stateNames[ self.get_state() ]
         newState = self.stateNames[ state ]
         msg = "Invalid state transition (%s -> %s)" \
@@ -2141,8 +2140,7 @@ class _BreakpointContainer (object):
         """
         Auxiliary method for L{_notify_exit_process}.
         """
-        pid     = event.get_pid()
-        process = event.get_process()
+        pid = event.get_pid()
 
         # Cleanup code breakpoints
         for (bp_pid, bp_address) in list(self.__codeBP.keys()):
@@ -2174,7 +2172,6 @@ class _BreakpointContainer (object):
 
         # Cleanup thread breakpoints on this module
         for tid in process.iter_thread_ids():
-            thread = process.get_thread(tid)
 
             # Running breakpoints
             if tid in self.__runningBP:
@@ -2263,7 +2260,6 @@ class _BreakpointContainer (object):
         @rtype:  L{CodeBreakpoint}
         @return: The code breakpoint object.
         """
-        process = self.system.get_process(dwProcessId)
         bp = CodeBreakpoint(address, condition, action)
 
         key = (dwProcessId, bp.get_address())
@@ -2326,10 +2322,9 @@ class _BreakpointContainer (object):
         @rtype:  L{PageBreakpoint}
         @return: The page breakpoint object.
         """
-        process = self.system.get_process(dwProcessId)
-        bp      = PageBreakpoint(address, pages, condition, action)
-        begin   = bp.get_address()
-        end     = begin + bp.get_size()
+        bp    = PageBreakpoint(address, pages, condition, action)
+        begin = bp.get_address()
+        end   = begin + bp.get_size()
 
         address  = begin
         pageSize = MemoryAddresses.pageSize
@@ -2438,11 +2433,10 @@ class _BreakpointContainer (object):
         @rtype:  L{HardwareBreakpoint}
         @return: The hardware breakpoint object.
         """
-        thread  = self.system.get_thread(dwThreadId)
-        bp      = HardwareBreakpoint(address, triggerFlag, sizeFlag, condition,
+        bp    = HardwareBreakpoint(address, triggerFlag, sizeFlag, condition,
                                                                         action)
-        begin   = bp.get_address()
-        end     = begin + bp.get_size()
+        begin = bp.get_address()
+        end   = begin + bp.get_size()
 
         if dwThreadId in self.__hardwareBP:
             bpSet = self.__hardwareBP[dwThreadId]
@@ -3057,7 +3051,6 @@ class _BreakpointContainer (object):
 
         # Get the hardware breakpoints.
         for (tid, bp) in self.get_process_hardware_breakpoints(dwProcessId):
-            pid = self.system.get_thread(tid).get_pid()
             bplist.append( (dwProcessId, tid, bp) )
 
         # Return the list of breakpoints.
@@ -3517,12 +3510,11 @@ class _BreakpointContainer (object):
         @rtype:  bool
         @return: C{True} to call the user-defined handle, C{False} otherwise.
         """
-        pid             = event.get_pid()
-        tid             = event.get_tid()
-        aThread         = event.get_thread()
-        aProcess        = event.get_process()
-        bCallHandler    = True
-        bIsOurs         = False
+        tid          = event.get_tid()
+        aThread      = event.get_thread()
+        aProcess     = event.get_process()
+        bCallHandler = True
+        bIsOurs      = False
 
         # In hostile mode set the default to pass the exception to the debugee.
         # If we later determine the exception is ours, hide it instead.

@@ -56,7 +56,7 @@ __all__ = [ 'ConsoleDebugger', 'CmdError' ]
 import winappdbg.win32 as win32
 from .util import PathOperations
 from .event import EventHandler, NoEvent
-from .textio import HexInput, HexOutput, HexDump, CrashDump, DebugLog
+from .textio import HexInput, HexOutput, HexDump, CrashDump
 
 import os
 import sys
@@ -74,7 +74,7 @@ from cmd import Cmd
 try:
     WindowsError
 except NameError:
-    from winappdbg.win32 import WindowsError, getenv
+    from winappdbg.win32 import WindowsError, getenv  # NOQA
 
 # lazy imports
 readline = None
@@ -339,7 +339,7 @@ class ConsoleDebugger (Cmd, EventHandler):
 
     # Token is a command line to execute.
     def input_command_line(self, command_line):
-        argv  = self.debug.system.cmdline_to_argv(command_line)
+        argv = self.debug.system.cmdline_to_argv(command_line)
         if not argv:
             raise CmdError("missing command line to execute")
         fname = argv[0]
@@ -1278,7 +1278,7 @@ class ConsoleDebugger (Cmd, EventHandler):
         """
         if self.cmdprefix:
             raise CmdError("prefix not allowed")
-        cmdline = self.input_command_line(arg)
+        self.input_command_line(arg)
         try:
             process = self.debug.execl(arg,
                                                 bConsole = False,
@@ -1294,7 +1294,7 @@ class ConsoleDebugger (Cmd, EventHandler):
         """
         if self.cmdprefix:
             raise CmdError("prefix not allowed")
-        cmdline = self.input_command_line(arg)
+        self.input_command_line(arg)
         try:
             process = self.debug.execl(arg,
                                                 bConsole = True,
@@ -1585,8 +1585,7 @@ class ConsoleDebugger (Cmd, EventHandler):
         pid = self.get_process_id_from_prefix()
         if not self.debug.is_debugee(pid):
             raise CmdError("target process is not being debugged")
-        process     = self.get_process(pid)
-        token_list  = self.split_tokens(arg, 1, 1)
+        token_list = self.split_tokens(arg, 1, 1)
         try:
             address = self.input_address(token_list[0], pid)
             deferred = False
@@ -1652,7 +1651,6 @@ class ConsoleDebugger (Cmd, EventHandler):
         pid = self.get_process_id_from_prefix()
         if not self.debug.is_debugee(pid):
             raise CmdError("target process is not being debugged")
-        process       = self.get_process(pid)
         token_list    = self.split_tokens(arg, 1, 2)
         address, size = self.input_address_range(token_list[0], pid)
         self.debug.watch_buffer(pid, address, size)
@@ -1668,7 +1666,7 @@ class ConsoleDebugger (Cmd, EventHandler):
         if arg == '*':
             if self.cmdprefix:
                 raise CmdError("prefix not supported")
-            breakpoints = debug.get_debugee_pids()
+            targets = debug.get_debugee_pids()
         else:
             targets = self.input_process_list( self.split_tokens(arg) )
             if self.cmdprefix:

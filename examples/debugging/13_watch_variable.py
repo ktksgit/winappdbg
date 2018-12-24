@@ -28,9 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import traceback
-
-from winappdbg import Debug, EventHandler, System, HexDump, win32
+from winappdbg import Debug, EventHandler, HexDump
 
 
 # This function will be called when the breakpoint is hit.

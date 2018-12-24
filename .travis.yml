@@ -1,0 +1,20 @@
+language: python
+
+# Supported CPython versions:
+# https://en.wikipedia.org/wiki/CPython#Version_history
+python:
+ - pypy
+ - 2.7
+
+# Use container-based infrastructure
+sudo: false
+
+install:
+ - pip install flake8
+
+script:
+ # Static analysis
+ - flake8 --ignore=E,F403,F405,W503,W504 .
+
+matrix:
+  fast_finish: true

@@ -49,12 +49,10 @@ __all__ = ['Process']
 import winappdbg.win32 as win32
 from .textio import HexDump, HexInput
 from .util import Regenerator, PathOperations, MemoryAddresses
-from .module import Module, _ModuleContainer
+from .module import _ModuleContainer
 from .tthread import Thread, _ThreadContainer
-from .window import Window
 from .search import Search, \
-                   Pattern, StringPattern, IStringPattern, HexPattern, \
-                   MemoryAccessWarning
+                   Pattern, StringPattern, IStringPattern, HexPattern
 from .disasm import Disassembler
 
 import re
@@ -70,7 +68,7 @@ from os import getenv
 try:
     WindowsError
 except NameError:
-    from winappdbg.win32 import WindowsError, getenv
+    from winappdbg.win32 import WindowsError, getenv  # NOQA
 
 # delayed import
 System = None
@@ -2530,7 +2528,7 @@ class Process (_ThreadContainer, _ModuleContainer):
         @raise WindowsError: An exception is raised on error.
         """
         try:
-            mbi = self.mquery(address)
+            self.mquery(address)
         except WindowsError as e:
             if e.winerror == win32.ERROR_INVALID_PARAMETER:
                 return False
@@ -3054,7 +3052,7 @@ class Process (_ThreadContainer, _ModuleContainer):
             try:
                 fileName = win32.GetMappedFileName(hProcess, baseAddress)
                 fileName = PathOperations.native_to_win32_pathname(fileName)
-            except WindowsError as e:
+            except WindowsError as e:  # NOQA
                 #try:
                 #    msg = "Can't get mapped file name at address %s in process " \
                 #          "%d, reason: %s" % (HexDump.address(baseAddress),
@@ -4907,7 +4905,6 @@ class _ProcessContainer (object):
         @return: C{True} to call the user-defined handle, C{False} otherwise.
         """
         dwProcessId = event.get_pid()
-        dwThreadId  = event.get_tid()
         hProcess    = event.get_process_handle()
 ##        if not self.has_process(dwProcessId): # XXX this would trigger a scan
         if dwProcessId not in self.__processDict:

@@ -4349,7 +4349,6 @@ class _BreakpointContainer (object):
         # Get the base address and size in pages required for this buffer.
         base  = MemoryAddresses.align_address_to_page_start(address)
         limit = MemoryAddresses.align_address_to_page_end(address + size)
-        pages = MemoryAddresses.get_buffer_size_in_pages(address, size)
 
         try:
 
@@ -4440,7 +4439,6 @@ class _BreakpointContainer (object):
         # Get the base address and size in pages required for this buffer.
         base  = MemoryAddresses.align_address_to_page_start(address)
         limit = MemoryAddresses.align_address_to_page_end(address + size)
-        pages = MemoryAddresses.get_buffer_size_in_pages(address, size)
 
         # For each page, get the breakpoint and it's condition object.
         # For each condition, remove the buffer.
@@ -4482,7 +4480,6 @@ class _BreakpointContainer (object):
         # Get the base address and size in pages required for the buffer.
         base  = MemoryAddresses.align_address_to_page_start(start)
         limit = MemoryAddresses.align_address_to_page_end(end)
-        pages = MemoryAddresses.get_buffer_size_in_pages(start, end - start)
 
         # For each page, get the breakpoint and it's condition object.
         # For each condition, remove the buffer.

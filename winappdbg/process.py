@@ -594,7 +594,7 @@ class Process (_ThreadContainer, _ModuleContainer):
         addr_1   = lpAddress - dwDelta
         addr_2   = lpAddress
         size_1   = dwDelta
-        size_2   = dwSize - dwDelta
+        #size_2   = dwSize - dwDelta
         data     = self.read(addr_1, dwSize)
         data_1   = data[:size_1]
         data_2   = data[size_1:]
@@ -1416,7 +1416,8 @@ class Process (_ThreadContainer, _ModuleContainer):
             process memory.
         """
         pattern = StringPattern(bytes)
-        return (x[0] for x in Search.search_process(self, [pattern], minAddr, maxAddr))
+        return (x[0] for x in Search.search_process(
+                    self, [pattern], minAddr, maxAddr))
 
     def search_text(self, text, encoding = "utf-16le",
                                 caseSensitive = False,

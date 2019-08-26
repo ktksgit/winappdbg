@@ -499,7 +499,7 @@ class HexDump (StaticClass):
             integer_size = cls.integer_size
         else:
             integer_size = bits / 4
-        return ('%%.%dX' % integer_size) % integer
+        return ('%%.%dX' % integer_size) % (integer,)
 
     @classmethod
     def address(cls, address, bits = None):
@@ -522,7 +522,7 @@ class HexDump (StaticClass):
             address_size = bits / 4
         if address < 0:
             address = ((2 ** bits) - 1) ^ ~address
-        return ('%%.%dX' % address_size) % address
+        return ('%%.%dX' % address_size) % (address,)
 
     @staticmethod
     def printable(data):
@@ -1135,7 +1135,7 @@ class Table (object):
         width   = self.__width
         len_old = len(width)
         len_new = len(row)
-        known   = min(len_old, len_new)
+        #known   = min(len_old, len_new)
         missing = len_new - len_old
         if missing > 0:
             width.extend( len_row[ -missing : ] )

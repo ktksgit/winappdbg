@@ -60,6 +60,7 @@ import re
 import time
 import struct
 import traceback
+import binascii
 
 #------------------------------------------------------------------------------
 
@@ -558,7 +559,10 @@ class HexDump (StaticClass):
         @rtype:  str
         @return: Hexadecimal representation.
         """
-        return separator.join( [ '%.2x' % ord(c) for c in data ] )
+        if not separator:
+            return binascii.hexlify(data).decode('utf-8')
+        else:
+            return separator.join( [ f'{c:x}' for c in data ] )
 
     @staticmethod
     def hexa_word(data, separator = ' '):

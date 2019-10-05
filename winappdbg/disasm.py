@@ -509,7 +509,7 @@ class CapstoneEngine (Engine):
         try:
             self.__bug = not isinstance(
                 list(capstone.cs_disasm_quick(
-                    capstone.CS_ARCH_X86, capstone.CS_MODE_32, "\x90", 1
+                    capstone.CS_ARCH_X86, capstone.CS_MODE_32, b"\x90", 1
                 ))[0],
                 capstone.capstone.CsInsn
             )

@@ -609,10 +609,10 @@ class CapstoneEngine (Engine):
                     mnemonic = "dcb "
                 bytes = []
                 for b in skipped:
-                    if b.isalpha():
-                        bytes.append("'%s'" % b)
+                    if bytearray(b).isalpha():
+                        bytes.append(f"'{b}'")
                     else:
-                        bytes.append("0x%x" % ord(b))
+                        bytes.append(hex(b))
                 op_str = ", ".join(bytes)
                 disasm = mnemonic + op_str
 

@@ -1924,6 +1924,8 @@ class Process (_ThreadContainer, _ModuleContainer):
             packed = '\0' * (size - len(packed)) + packed
         elif len(packed) > size:
             packed = packed[:size]
+        if type(packed) == str:
+            packed = packed.encode('ascii')
         return struct.unpack(format, packed)[0]
 
     def __poke_c_type(self, address, format, unpacked):

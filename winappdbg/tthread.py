@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2018, Mario Vilas
+# Copyright (c) 2009-2020, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -960,8 +960,8 @@ class Thread (object):
         Linear addresses can be used to access a process memory,
         calling L{Process.read} and L{Process.write}.
 
-        @type  segment: str
-        @param segment: Segment register name.
+        @type  segment: str, int or long
+        @param segment: Segment register name or DWORD descriptor table index.
 
         @type  address: int
         @param address: Segment relative memory address.
@@ -975,8 +975,24 @@ class Thread (object):
             The current architecture does not support selectors.
             Selectors only exist in x86-based systems.
         """
+
+        selector = None
+
+        if isinstance(segment, str):
+            selector = self.get_register(segment)
+        elif isinstance(segment, (int, long)):
+            segment = long(segment)
+
+            if segment < 0L or segment > 0xFFFFFFFFL:
+                msg = "Descriptor table index %d is an invalid DWORD."
+                msg = msg % segment
+                raise ValueError(msg)
+
+            selector = segment
+        else:
+            raise ValueError("Argument 'segment' must be a string or a DWORD.")
+
         hThread  = self.get_handle(win32.THREAD_QUERY_INFORMATION)
-        selector = self.get_register(segment)
         ldt      = win32.GetThreadSelectorEntry(hThread, selector)
         BaseLow  = ldt.BaseLow
         BaseMid  = ldt.HighWord.Bytes.BaseMid << 16
@@ -986,9 +1002,17 @@ class Thread (object):
         LimitHi  = ldt.HighWord.Bits.LimitHi  << 16
         Limit    = LimitLow | LimitHi
         if address > Limit:
-            msg = "Address %s too large for segment %s (selector %d)"
-            msg = msg % (HexDump.address(address, self.get_bits()),
-                         segment, selector)
+            msg = None
+
+            if isinstance(segment, str):
+                msg = "Address %s too large for segment %s (selector %d)"
+                msg = msg % (HexDump.address(address, self.get_bits()),
+                            segment, selector)
+            else:
+                msg = "Address %s too large for segment with selector %d"
+                msg = msg % (HexDump.address(address, self.get_bits()),
+                            selector)
+
             raise ValueError(msg)
         return Base + address
 

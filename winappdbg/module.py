@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2009-2018, Mario Vilas
+# Copyright (c) 2009-2020, Mario Vilas
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -580,23 +580,6 @@ class Module (object):
                 if symbol == SymbolName.lower():
                     return SymbolAddress
 
-    def get_symbol_from_list(self,address):
-        found = None
-        SymList = {}
-        SortedSymList = {}
-
-        for (SymbolName, SymbolAddress, SymbolSize) in self.iter_symbols():
-            SymList[SymbolAddress] = SymbolName
-        SortedSymList = sorted(SymList.items())
-        for SymbolAddress,SymbolName in SortedSymList:
-            if SymbolAddress <= address:
-                SymbolStartAddress = SymbolAddress
-                SymbolStartName = SymbolName
-            else:
-                break
-        found = (SymbolStartName, SymbolStartAddress, 0)
-        return found
-
     def get_symbol_at_address(self, address):
         """
         Tries to find the closest matching symbol for the given address.
@@ -611,17 +594,14 @@ class Module (object):
              - Size (in bytes)
             Returns C{None} if no symbol could be matched.
         """
-        found = None
-        for (SymbolName, SymbolAddress, SymbolSize) in self.iter_symbols():
-
+        result = None
+        symbols = self.get_symbols()
+        symbols.sort()
+        for SymbolAddress, SymbolName, SymbolSize in symbols:
             if SymbolAddress > address:
-                continue
-            if SymbolAddress + SymbolSize > address:
-                if not found or found[1] < SymbolAddress:
-                    found = (SymbolName, SymbolAddress, SymbolSize)
-        if found == None:
-            found = self.get_symbol_from_list(address)
-        return found
+                break
+            result = (SymbolName, SymbolAddress, SymbolSize)
+        return result
 
 #------------------------------------------------------------------------------
 

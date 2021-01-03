@@ -1067,7 +1067,7 @@ class Hook (object):
 
     def __init__(self, preCB = None, postCB = None,
                        paramCount = None, signature = None,
-                       arch = None):
+                       arch = None, preCBArgs = None, postCBArgs = None):
         """
         @type  preCB: function
         @param preCB: (Optional) Callback triggered on function entry.
@@ -1120,9 +1120,11 @@ class Hook (object):
             be used to parse the arguments from the stack. Overrides the
             C{paramCount} argument.
 
-        @type  arch: str
-        @param arch: (Optional) Target architecture. Defaults to the current
-            architecture. See: L{win32.arch}
+        @type  preCBArgs: list
+        @param preCBArgs: (Optional) preCB custom arguments.
+
+        @type  postCBArgs: list
+        @param postCBArgs: (Optional) postCB custom arguments.
         """
         self.__preCB      = preCB
         self.__postCB     = postCB
@@ -1140,6 +1142,9 @@ class Hook (object):
             self._signature = self._calc_signature(signature)
         else:
             self._signature = None
+
+        self.__preCBArgs = preCBArgs
+        self.__postCBArgs = postCBArgs
 
     def _cast_signature_pointers_to_void(self, signature):
         c_void_p  = ctypes.c_void_p
@@ -1240,8 +1245,10 @@ class Hook (object):
 
         # Call the "pre" callback.
         try:
-            self.__callHandler(self.__preCB, event, ra, *params)
-
+            if self.__preCBArgs is not None:
+                self.__callHandler(self.__preCB, event, ra, self.__preCBArgs, *params)
+            else:
+                self.__callHandler(self.__preCB, event, ra, *params)
         # If no "post" callback is defined, forget the function arguments.
         finally:
             if not bHookedReturn:
@@ -1309,7 +1316,10 @@ class Hook (object):
         """
         aThread = event.get_thread()
         retval  = self._get_return_value(aThread)
-        self.__callHandler(self.__postCB, event, retval)
+        if self.__postCBArgs is not None:
+            self.__callHandler(self.__postCB, event, self.__postCBArgs, retval)
+        else:
+            self.__callHandler(self.__postCB, event, retval)
 
     def __callHandler(self, callback, event, *params):
         """
@@ -3963,7 +3973,7 @@ class _BreakpointContainer (object):
 
     def hook_function(self, pid, address,
                       preCB = None, postCB = None,
-                      paramCount = None, signature = None):
+                      paramCount = None, signature = None, preCBArgs = None, postCBArgs = None):
         """
         Sets a function hook at the given address.
 
@@ -4039,7 +4049,7 @@ class _BreakpointContainer (object):
         except KeyError:
             aProcess = Process(pid)
         arch = aProcess.get_arch()
-        hookObj = Hook(preCB, postCB, paramCount, signature, arch)
+        hookObj = Hook(preCB, postCB, paramCount, signature, arch, preCBArgs, postCBArgs)
         bp = self.break_at(pid, address, hookObj)
         return bp is not None
 

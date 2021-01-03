@@ -980,10 +980,9 @@ class Thread (object):
 
         if isinstance(segment, str):
             selector = self.get_register(segment)
-        elif isinstance(segment, (int, long)):
-            segment = long(segment)
-
-            if segment < 0L or segment > 0xFFFFFFFFL:
+        elif isinstance(segment, int):
+ 
+            if segment < 0 or segment > 0xFFFFFFFF:
                 msg = "Descriptor table index %d is an invalid DWORD."
                 msg = msg % segment
                 raise ValueError(msg)
